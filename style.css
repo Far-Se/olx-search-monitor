@@ -85,7 +85,7 @@ td div {
 
 td div a {
 	order: 1;
-	//text-decoration: none;
+	text-decoration: none;
 }
 
 td div a.seen {
