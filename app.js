@@ -29,8 +29,8 @@ chrome.runtime.sendMessage({
 			}
 			let ndiv = result.seen ? '.tvisited' : '.tnew';
 			div.find(ndiv).append(`<tr>
-                ${result.table[0] ? `<td>${result.table[0]}&nbsp;mp</td>` : ''}
-                ${result.table[0] ? `<td>${result.table[1]}&nbsp;€</td>` : ''}
+                ${result.table[0] ? `<td>${result.table[0]} mp</td>` : ''}
+                ${result.table[0] ? `<td>${result.table[1]} €</td>` : ''}
                 <td>${result.price.replace(/(\d) (\d)/g,'$1,$2').replace(/ /g,'&nbsp;')}</td><td>
                 <a href = "${result.href}" target = "_blank" class = "${result.seen ? 'seen' : ''}" data-type = "${type}" data-id = "${result.id}">
                     ` + (results[type][0]['table'] ? '' : `<strong>${result.price}</strong>`) + `
@@ -45,7 +45,7 @@ chrome.runtime.sendMessage({
 		//td.append(div);
 		table.append(`<div class="column"><h2>${type} (${unseenCount}/${results[type].length})</h2>${div.html()}</div>`);
 	}
-	//if (body.find('td a').length === 0) setTimeout(() => location.reload(), 500);
+	if (table.find('td a').length === 0 && typeof div !== 'undefined') setTimeout(() => location.reload(), 500);
 
 	let interval = localStorage.getItem('aux_intervalSearch') || 1;
 	$('#intervalSearch').val(interval);
