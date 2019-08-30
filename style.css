@@ -77,18 +77,38 @@ button+a:visited {
 	display: inline-block;
 }
 
-td div {
-	display: flex;
-	flex-direction: column;
-	min-width: 0;
+.column {
+	max-width: calc(100% * 0.33333);
+	display: inline-block;
+	width: 100%;
 }
 
-td div a {
+.column h2 {
+	text-align: center;
+	margin-bottom: 5px;
+	margin-top: 15px;
+}
+
+@media all and (max-width:800px) {
+	.column {
+		max-width: 100%;
+		display: inline-block;
+		width: 100%;
+		padding-left: 15px;
+
+	}
+
+	body {
+		padding-bottom: 15px;
+	}
+}
+
+div a {
 	order: 1;
 	text-decoration: none;
 }
 
-td div a.seen {
+div a.seen {
 	order: 10;
 }
 

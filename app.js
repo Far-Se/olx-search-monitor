@@ -16,43 +16,36 @@ if (!Object.prototype.forEach) {
 chrome.runtime.sendMessage({
 	do: 'getResults'
 }, results => {
-	const head = $('thead tr#columns');
-	const body = $('tbody');
+	const table = $('#table');
 	for (let type in results) {
 		if (type.indexOf('//') !== -1) continue;
 		let unseenCount = 0;
-		let td = $('<td />');
-		let div = $('<div />');
-		if (results[type][0]['table']) div.append('<table class="tnew">');
-		if (results[type][0]['table']) div.append('<table class="tvisited">');
+		let div         = $('<div />');
+		div.append('<table class="tnew">');
+		div.append('<table class="tvisited">');
 		for (let result of results[type]) {
-			if (results[type][0]['table']) {
-				let ndiv = result.seen ? '.tvisited' : '.tnew';
-				div.find(ndiv).append(`<tr>
-                <td>${result.table[0]}&nbsp;mp</td>
-                <td>${result.table[1]}&nbsp;€</td>
-                <td>${result.price.replace(' ',',').replace(/ /g,'&nbsp;')}</td><td>
+			if (!result.table) {
+				result.table = ["", ""];
+			}
+			let ndiv = result.seen ? '.tvisited' : '.tnew';
+			div.find(ndiv).append(`<tr>
+                ${result.table[0] ? `<td>${result.table[0]}&nbsp;mp</td>` : ''}
+                ${result.table[0] ? `<td>${result.table[1]}&nbsp;€</td>` : ''}
+                <td>${result.price.replace(/(\d) (\d)/g,'$1,$2').replace(/ /g,'&nbsp;')}</td><td>
                 <a href = "${result.href}" target = "_blank" class = "${result.seen ? 'seen' : ''}" data-type = "${type}" data-id = "${result.id}">
                     ` + (results[type][0]['table'] ? '' : `<strong>${result.price}</strong>`) + `
-                    <span>${result.seen ? '' : '&bull;'} ${result.title}</span>
+                    <span>${result.title}</span>
                 </a>
                 </td></tr>
                 `);
-			} else
-				div.append(`
-                <a href = "${result.href}" target = "_blank" class = "${result.seen ? 'seen' : ''}" data-type = "${type}" data-id = "${result.id}">
-                    ` + (results[type][0]['table'] ? '' : `<strong>${result.price}</strong>`) + `
-                    <span>${result.seen ? '' : '&bull;'} ${result.title}</span>
-                </a>
-            `);
+
 			result.seen || unseenCount++;
 		}
 
-		td.append(div);
-		head.append(`<th>${type} (${unseenCount}/${results[type].length})</th>`);
-		body.append(td);
+		//td.append(div);
+		table.append(`<div class="column"><h2>${type} (${unseenCount}/${results[type].length})</h2>${div.html()}</div>`);
 	}
-	if (body.find('td a').length === 0) setTimeout(() => location.reload(), 500);
+	//if (body.find('td a').length === 0) setTimeout(() => location.reload(), 500);
 
 	let interval = localStorage.getItem('aux_intervalSearch') || 1;
 	$('#intervalSearch').val(interval);
@@ -95,16 +88,16 @@ $(() => {
 		let saveData = "{";
 		$('.titleFilter').each((e, i) => {
 			let title = $(i).val();
-			let data = $('.searchFilter').eq(e).val();
+			let data  = $('.searchFilter').eq(e).val();
 			if (title.length && data.length) {
 				saveData += `"${title}" : "${data}",`;
 			}
 		});
-		saveData = saveData.substr(0, saveData.length - 1);
+		saveData  = saveData.substr(0, saveData.length - 1);
 		saveData += "}";
 		chrome.runtime.sendMessage({
-				do: 'saveData',
-				data: saveData,
+				do      : 'saveData',
+				data    : saveData,
 				interval: $('#intervalSearch').val()
 			}, () => setTimeout(function() {
 				location.reload()
@@ -120,7 +113,7 @@ $(() => {
 	);
 	$('#searchCity').on('click', function() {
 		chrome.runtime.sendMessage({
-			do: 'citySerach',
+			do  : 'citySerach',
 			city: $('#citySearch').val(),
 		}, (result) => {
 			$('#cityResults').html('');
@@ -178,7 +171,7 @@ $(() => {
 		if (a.hasClass('seen') || e.which == 3) return;
 
 		const type = a.data('type');
-		const id = a.data('id');
+		const id   = a.data('id');
 
 		chrome.runtime.sendMessage({
 			do: 'markSeen',
