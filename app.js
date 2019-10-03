@@ -20,7 +20,7 @@ chrome.runtime.sendMessage({
 	for (let type in results) {
 		if (type.indexOf('//') !== -1) continue;
 		let unseenCount = 0;
-		let div         = $('<div />');
+		let div = $('<div />');
 		div.append('<table class="tnew">');
 		div.append('<table class="tvisited">');
 		for (let result of results[type]) {
@@ -45,7 +45,11 @@ chrome.runtime.sendMessage({
 		//td.append(div);
 		table.append(`<div class="column"><h2>${type} (${unseenCount}/${results[type].length})</h2>${div.html()}</div>`);
 	}
-	if (table.find('td a').length === 0 && typeof div !== 'undefined') setTimeout(() => location.reload(), 500);
+    if (table.find('td a').length === 0 && table.find('h2').length) 
+    {
+        table.html('<div class="column"><h2>Reloading...</h2></div>');
+        setTimeout(() => location.reload(), 800);
+    }
 
 	let interval = localStorage.getItem('aux_intervalSearch') || 1;
 	$('#intervalSearch').val(interval);
@@ -88,16 +92,16 @@ $(() => {
 		let saveData = "{";
 		$('.titleFilter').each((e, i) => {
 			let title = $(i).val();
-			let data  = $('.searchFilter').eq(e).val();
+			let data = $('.searchFilter').eq(e).val();
 			if (title.length && data.length) {
 				saveData += `"${title}" : "${data}",`;
 			}
 		});
-		saveData  = saveData.substr(0, saveData.length - 1);
+		saveData = saveData.substr(0, saveData.length - 1);
 		saveData += "}";
 		chrome.runtime.sendMessage({
-				do      : 'saveData',
-				data    : saveData,
+				do: 'saveData',
+				data: saveData,
 				interval: $('#intervalSearch').val()
 			}, () => setTimeout(function() {
 				location.reload()
@@ -113,7 +117,7 @@ $(() => {
 	);
 	$('#searchCity').on('click', function() {
 		chrome.runtime.sendMessage({
-			do  : 'citySerach',
+			do: 'citySerach',
 			city: $('#citySearch').val(),
 		}, (result) => {
 			$('#cityResults').html('');
@@ -148,7 +152,7 @@ $(() => {
 					for (let result of results[type]) {
 						result.seen || chrome.tabs.create({
 							url: result.href
-						});
+						});98
 					}
 				}
 			});
@@ -164,14 +168,26 @@ $(() => {
 			}, 1500);
 		});
 	});
-
+    $('#toggleResponsive').on('change', function() {
+        localStorage.setItem("aux_Responsive", ~~$(this).prop('checked'));
+        setResponsive();
+    });
+    let setResponsive = () => {
+        const toggleResponsive = localStorage.getItem('aux_Responsive');
+        if(toggleResponsive == false)
+            $('body').append(`<style>.column{max-width: calc(100% * 0.33333) !important;padding-left:0px !important;}`)
+        else
+            $('body').append(`<style>.column{max-width: 100% !important;padding-left:15px !important;}`)
+        $('#toggleResponsive').attr('checked', toggleResponsive);
+    };
+    setResponsive();
 	$(document).on('mousedown', 'div a', function(e) {
 		const a = $(this);
 
 		if (a.hasClass('seen') || e.which == 3) return;
 
 		const type = a.data('type');
-		const id   = a.data('id');
+		const id = a.data('id');
 
 		chrome.runtime.sendMessage({
 			do: 'markSeen',

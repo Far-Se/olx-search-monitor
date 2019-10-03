@@ -56,7 +56,7 @@ class Background {
 			} else if (message.do === 'getSearchData') {
 				respond(this.searchData);
 			} else if (message.do === 'reloadResults') {
-				this.parseResults(() => respond("done"));
+				this.parseResults(() => setTimeout( () => { respond("done")}, 500));
 			} else if (message.do === 'citySerach') {
 				this.searchCity(message.city, (results) => respond(results));
 			} else if (message.do === 'markSeen') {
