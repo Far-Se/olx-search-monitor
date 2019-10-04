@@ -45,11 +45,10 @@ chrome.runtime.sendMessage({
 		//td.append(div);
 		table.append(`<div class="column"><h2>${type} (${unseenCount}/${results[type].length})</h2>${div.html()}</div>`);
 	}
-    if (table.find('td a').length === 0 && table.find('h2').length) 
-    {
-        table.html('<div class="column"><h2>Reloading...</h2></div>');
-        setTimeout(() => location.reload(), 800);
-    }
+	if (table.find('td a').length === 0 && table.find('h2').length) {
+		table.html('<div class="column"><h2>Reloading...</h2></div>');
+		setTimeout(() => location.reload(), 800);
+	}
 
 	let interval = localStorage.getItem('aux_intervalSearch') || 1;
 	$('#intervalSearch').val(interval);
@@ -152,7 +151,8 @@ $(() => {
 					for (let result of results[type]) {
 						result.seen || chrome.tabs.create({
 							url: result.href
-						});98
+						});
+						98
 					}
 				}
 			});
@@ -168,19 +168,25 @@ $(() => {
 			}, 1500);
 		});
 	});
-    $('#toggleResponsive').on('change', function() {
-        localStorage.setItem("aux_Responsive", ~~$(this).prop('checked'));
-        setResponsive();
-    });
-    let setResponsive = () => {
-        const toggleResponsive = localStorage.getItem('aux_Responsive');
-        if(toggleResponsive == false)
-            $('body').append(`<style>.column{max-width: calc(100% * 0.33333) !important;padding-left:0px !important;}`)
-        else
-            $('body').append(`<style>.column{max-width: 100% !important;padding-left:15px !important;}`)
-        $('#toggleResponsive').attr('checked', toggleResponsive);
-    };
-    setResponsive();
+	$('#toggleResponsive').on('change', function() {
+		localStorage.setItem("aux_Responsive", ~~$(this).prop('checked'));
+		if (~~$(this).prop('checked') === 0) {
+			$('#customStyle').remove();
+		} else
+			setResponsive();
+	});
+	let setResponsive = () => {
+		const toggleResponsive = localStorage.getItem('aux_Responsive') * 1;
+		if (toggleResponsive == true)
+			$('body').append(`<style id="customStyle">
+                .column{
+                    max-width: calc(100% * 0.33333) !important;
+                    padding-left:0px !important;
+                }
+            </style>`);
+		$('#toggleResponsive').prop('checked', toggleResponsive );//toggleResponsive == false ? '0' : 'checked');
+	};
+	setResponsive();
 	$(document).on('mousedown', 'div a', function(e) {
 		const a = $(this);
 
