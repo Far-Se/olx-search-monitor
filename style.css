@@ -89,7 +89,7 @@ button+a:visited {
 	margin-top: 15px;
 }
 
-@media all and (max-width:1000px) {
+@media all and (max-width:900px) {
 	.column {
 		max-width: 100%;
 		display: inline-block;

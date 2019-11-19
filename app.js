@@ -159,6 +159,12 @@ $(() => {
 		});
 	});
 	$('#clear-cache').on('click', function() {
+        // localStorage.setItem('seenIds','{}');
+        // $("#clear-cache").text("Done");
+        // setTimeout(() => {
+        //     $("#clear-cache").text("Clear Cache");
+        // }, 1500);
+
 		chrome.runtime.sendMessage({
 			do: 'clearCache'
 		}, results => {

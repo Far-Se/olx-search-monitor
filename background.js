@@ -1,4 +1,4 @@
-const REMEMBER_IDS_LIMIT = 1e3;
+const REMEMBER_IDS_LIMIT = 3e3;
 const LOCALSTORAGE_PREFIX = 'oleix_checkah';
 
 class Background {
@@ -64,12 +64,13 @@ class Background {
 			} else if (message.do === 'markAllSeen') {
 				this.markAllSeen(respond);
 			} else if (message.do === 'clearCache') {
-				chrome.storage.sync.get(null, (e) => {
-					console.log(e);
-					chrome.storage.sync.set({
-						'seenIds': '{}'
-					});
-				});
+                localStorage.setItem('seenIds','{}');
+				// chrome.storage.sync.get(null, (e) => {
+				// 	console.log(e);
+				// 	chrome.storage.sync.set({
+				// 		'seenIds': '{}'
+				// 	});
+				// });
 				this.seenIds = {};
 				this.normalizeVariables();
 				respond("done");
@@ -303,6 +304,8 @@ class Background {
 	}
 
 	store(key, value, cb = function() {}) {
+        localStorage.setItem(key,JSON.stringify(value));
+        return cb();
 		chrome.storage.sync.set({
 			[key]: JSON.stringify(value)
 		}, (e) => {
@@ -311,19 +314,28 @@ class Background {
 	}
 
 	retrieve(key, def = null, cb = function() {}) {
-		//const value = localStorage.getItem(LOCALSTORAGE_PREFIX + key) || def;
-		try {
-			chrome.storage.sync.get(key, (v) => {
-				cb(Object.keys(v).length === 0 ? def : JSON.parse(v[key]))
-			})
-		} catch (e) {
-			cb(def);
-		}
-		// try {
-		// 	return JSON.parse(value);
-		// } catch (e) {
-		// 	return value;
-		// }
+        if(key !== 'searchData')
+        {
+            const value = localStorage.getItem(key) || 0;
+            if(value)
+                return cb(JSON.parse(value));
+            else return cb(def);
+        }
+        if(localStorage.getItem('searchData') === null)
+        {
+            try {
+                chrome.storage.sync.get(key, (v) => {
+                    cb(Object.keys(v).length === 0 ? def : JSON.parse(v[key]))
+                })
+            } catch (e) {
+                cb(def);
+            }
+        }else {
+            const value = localStorage.getItem(key) || 0;
+            if(value)
+                return cb(JSON.parse(value));
+            else return cb(def);
+        }
 	}
 }
 
