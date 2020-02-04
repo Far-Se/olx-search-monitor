@@ -173,7 +173,43 @@ $(() => {
 				$("#clear-cache").text("Clear Cache");
 			}, 1500);
 		});
-	});
+    });
+    
+	$('#getTabs').on('click', function() {
+        chrome.permissions.contains({
+            permissions: ['tabs'],
+            origins: ['*://*.olx.ro/*']
+          }, function(result) {
+            if (result) {
+                chrome.runtime.sendMessage({
+                    do: 'getOLXTabs'
+                }, results => {
+                    result = decodeURIComponent(results.replace(/["](.*?)['"]$/g, '$1').replace('Cauta+acum...', '').replace('view=&min_id=&', '').replace(/"g/, "%22").replace(/'g/, "%27"));
+                    $('#items').append(`
+                        <div   class = "row">
+                        <input class = "titleFilter" name  = "title[]" value = "" focus placeholder = "Title">
+                        <input class = "searchFilter" name = "value[]" value = "${result}" placeholder = "Search Data">
+                        </div>
+                    `);
+                    $('#items').find('.row:last-child .titleFilter').focus();
+                });
+            } else {
+                chrome.permissions.request({
+                    permissions: ['tabs'],
+                    origins: ['*://*.olx.ro/*']
+                  }, function(granted) {
+                    // The callback argument will be true if the user granted the permissions.
+                    if (granted) {
+                        $('#getTabs').trigger('click');
+                    } else {
+                        window.alert("Trebuie permisiunea de TABS pentru aceasta optiune");
+                    }
+                  });
+            }
+          });
+
+    });
+    
 	$('#toggleResponsive').on('change', function() {
 		localStorage.setItem("aux_Responsive", ~~$(this).prop('checked'));
 		if (~~$(this).prop('checked') === 0) {

@@ -11,6 +11,7 @@ class Background {
 		this.resultIds = {};
 		this.interval = localStorage.getItem('aux_intervalSearch') || 1;
 		this.searchData = {};
+		this.OLXTabsResult = [];
 	}
 
 	init() {
@@ -55,8 +56,12 @@ class Background {
 				respond(this.results);
 			} else if (message.do === 'getSearchData') {
 				respond(this.searchData);
+			} else if (message.do === 'getOLXTabs') {
+				this.getOLXTabs( (r) => respond(r));
 			} else if (message.do === 'reloadResults') {
-				this.parseResults(() => setTimeout( () => { respond("done")}, 500));
+				this.parseResults(() => setTimeout(() => {
+					respond("done")
+				}, 500));
 			} else if (message.do === 'citySerach') {
 				this.searchCity(message.city, (results) => respond(results));
 			} else if (message.do === 'markSeen') {
@@ -64,7 +69,7 @@ class Background {
 			} else if (message.do === 'markAllSeen') {
 				this.markAllSeen(respond);
 			} else if (message.do === 'clearCache') {
-                localStorage.setItem('seenIds','{}');
+				localStorage.setItem('seenIds', '{}');
 				// chrome.storage.sync.get(null, (e) => {
 				// 	console.log(e);
 				// 	chrome.storage.sync.set({
@@ -103,7 +108,26 @@ class Background {
 
 		})
 	}
+	getOLXTabs( callback ) {
+		let that = this;
+		chrome.tabs.query({
+			url: '*://*.olx.ro/*'
+		}, (tabs) => {
+			tabs.forEach((tab) => {
+				// chrome.tabs.update(tab.id, {
+				// 	active: true
+				// });
+				chrome.tabs.executeScript(tab.id, {
+					"code": "new URLSearchParams(new FormData(mainTopSearch)).toString()"
+				}, function (r) {
+					callback(r[0]);
+				});
+			});
+		})
+	}
+	addToOLXTabResults(result) {
 
+	}
 	markAllSeen(cb) {
 		for (let type in this.results) {
 			for (let id of this.resultIds[type]) {
@@ -173,7 +197,8 @@ class Background {
 								that.counter += 1;
 							}
 							if (that.resultIds[type].includes(id)) return;
-							if ((~searchData.indexOf('=907') || ~searchData.indexOf('=911') || ~searchData.indexOf('=909') || ~searchData.indexOf('=913')) && searchData.indexOf('&mp') < 0) {
+							//if ((~searchData.indexOf('=907') || ~searchData.indexOf('=911') || ~searchData.indexOf('=909') || ~searchData.indexOf('=913')) && searchData.indexOf('&mp') < 0) {
+							if ((~searchData.indexOf('/imobiliare/')) && searchData.indexOf('&mp') < 0) {
 								let forbidden = [
 									'apartament',
 									'casa',
@@ -198,54 +223,54 @@ class Background {
 									'vila',
 									'dou',
 									'vand',
-                                    'tip',
-                                    'cod',
-                                    'garsoniera',
-                                    'oferta',
-                                    'inchiriez',
-                                    'bloc',
-                                    'persoana'
-                                
+									'tip',
+									'cod',
+									'garsoniera',
+									'oferta',
+									'inchiriez',
+									'bloc',
+									'persoana'
+
 								];
 								title = title.replace(/(?!(.partament|Casa))[A-Z]\w{2,}( ([a-z0-9]+| ) [A-Z]\w+)?/g, (e) => {
 									if (~forbidden.indexOf(e.toLowerCase()))
 										return e;
 									return `<span>${e}</span>`;
-                                });
-                                if(~searchData.indexOf('=907') || ~searchData.indexOf('=911')) {
-								$.get(href)
-									.done(xdata => {
-                                        let match = xdata.match(/\d+.m²/gm);
-                                        let mp = '--';
-                                        let sqmt = '--';
-										if (match) {
-											mp = parseInt(match[0].replace('²', 'p'));
-											let iPrice = parseInt(price.replace(' ', ''));
-											sqmt = parseInt(iPrice / mp);
-											//title = `<span>${mp} mp</span> - <span>${sqmt} €</span> ${title}`;
-										}
-										that.results[type].push({
-											id,
-											href,
-											title,
-											price,
-                                            seen: that.isSeen(type, id),
-                                            table: [mp, sqmt]
-										});
-										that.resultIds[type].push(id);
+								});
+								if (~searchData.indexOf('=907') || ~searchData.indexOf('=911')) {
+									$.get(href)
+										.done(xdata => {
+											let match = xdata.match(/\d+.m²/gm);
+											let mp = '--';
+											let sqmt = '--';
+											if (match) {
+												mp = parseInt(match[0].replace('²', 'p'));
+												let iPrice = parseInt(price.replace(' ', ''));
+												sqmt = parseInt(iPrice / mp);
+												//title = `<span>${mp} mp</span> - <span>${sqmt} €</span> ${title}`;
+											}
+											that.results[type].push({
+												id,
+												href,
+												title,
+												price,
+												seen: that.isSeen(type, id),
+												table: [mp, sqmt]
+											});
+											that.resultIds[type].push(id);
 
-									});
-                                }else {
-                                    
-										that.results[type].push({
-											id,
-											href,
-											title,
-											price,
-											seen: that.isSeen(type, id)
 										});
-										that.resultIds[type].push(id);
-                                }
+								} else {
+
+									that.results[type].push({
+										id,
+										href,
+										title,
+										price,
+										seen: that.isSeen(type, id)
+									});
+									that.resultIds[type].push(id);
+								}
 
 							} else {
 								that.results[type].push({
@@ -304,8 +329,8 @@ class Background {
 	}
 
 	store(key, value, cb = function() {}) {
-        localStorage.setItem(key,JSON.stringify(value));
-        return cb();
+		localStorage.setItem(key, JSON.stringify(value));
+		return cb();
 		chrome.storage.sync.set({
 			[key]: JSON.stringify(value)
 		}, (e) => {
@@ -314,28 +339,26 @@ class Background {
 	}
 
 	retrieve(key, def = null, cb = function() {}) {
-        if(key !== 'searchData')
-        {
-            const value = localStorage.getItem(key) || 0;
-            if(value)
-                return cb(JSON.parse(value));
-            else return cb(def);
-        }
-        if(localStorage.getItem('searchData') === null)
-        {
-            try {
-                chrome.storage.sync.get(key, (v) => {
-                    cb(Object.keys(v).length === 0 ? def : JSON.parse(v[key]))
-                })
-            } catch (e) {
-                cb(def);
-            }
-        }else {
-            const value = localStorage.getItem(key) || 0;
-            if(value)
-                return cb(JSON.parse(value));
-            else return cb(def);
-        }
+		if (key !== 'searchData') {
+			const value = localStorage.getItem(key) || 0;
+			if (value)
+				return cb(JSON.parse(value));
+			else return cb(def);
+		}
+		if (localStorage.getItem('searchData') === null) {
+			try {
+				chrome.storage.sync.get(key, (v) => {
+					cb(Object.keys(v).length === 0 ? def : JSON.parse(v[key]))
+				})
+			} catch (e) {
+				cb(def);
+			}
+		} else {
+			const value = localStorage.getItem(key) || 0;
+			if (value)
+				return cb(JSON.parse(value));
+			else return cb(def);
+		}
 	}
 }
 

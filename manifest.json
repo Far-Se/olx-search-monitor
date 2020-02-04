@@ -14,6 +14,7 @@
     "permissions": [
         "alarms","*://*.olx.ro/*","storage"
     ],
+    "optional_permissions": ["tabs"], 
     "icons": {
         "16" : "olx-icon.png",
         "48" : "olx-icon.png",
