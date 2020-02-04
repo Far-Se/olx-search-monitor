@@ -1,17 +1,23 @@
+:root {
+    --bg1: #31364A;
+    --bg2: #292d3e;
+    --c1: #929AC9;
+    --c2: #FF454F;
+}
 body {
 	min-width: 790px;
-	background: #31364A;
-	color: #929AC9;
+	background: var(--bg1);
+	color: var(--c1);
 	margin: 0px;
 	padding: 5px 0px;
 }
 
 a {
-	color: #929AC9;
+	color: var(--c1);
 }
 
 a:visited {
-	color: rgba(100, 107, 146, 0.7)
+    filter: grayscale(50%)
 }
 
 table {
@@ -24,8 +30,8 @@ table {
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: #929AC9;
-	border: 2px solid #929AC9;
+	background-color: var(--c1);
+	border: 2px solid var(--c1);
 	border-radius: 100px;
 }
 
@@ -65,9 +71,10 @@ td a strong {
 
 button,
 button+a,
-button+a:visited {
+button+a:visited,
+a#getTabs {
 	border: 1px solid #eee;
-	background: #292D3E;
+	background: var(--bg2);
 	color: #69CBBC;
 	text-decoration: none;
 	font-size: 15px;
@@ -105,7 +112,7 @@ button+a:visited {
 	h4 {
 		max-height: 100px;
 		overflow-y: scroll;
-		border-bottom: 2px solid #292d3e;
+		border-bottom: 2px solid var(--bg2);
 	}
 }
 
@@ -145,8 +152,8 @@ p+label,
 #settings input,
 #settings select,
 .search button {
-	background: #292D3E;
-	color: #FF454F;
+	background: var(--bg2);
+	color: var(--c2);
 	border: 1px solid rgba(41, 45, 62, 0.568);
 	line-height: 16px;
 	font-size: 13px;
@@ -169,7 +176,7 @@ input#citySearch {
 	display: block;
 	font-weight: bold;
 	width: 100%;
-	color: #FF454F !important;
+	color: var(--c2) !important;
 }
 
 #settings p {
@@ -194,7 +201,7 @@ button#addNew {
 	margin-top: -10px;
 	width: 180px;
 	margin-bottom: 10px;
-	color: #FF454F;
+	color: var(--c2);
 }
 
 div a span>span {
@@ -226,13 +233,13 @@ div a.seen span>span {
 	vertical-align: text-top;
 	width: 20px;
 	height: 20px;
-	background: #292D3E;
-	border: 1px solid #FF454F;
+	background: var(--bg2);
+	border: 1px solid var(--c2);
 	margin-bottom: 5px;
 }
 
 .styled-checkbox:hover+label:before {
-	background: #FF454F;
+	background: var(--c2);
 }
 
 .styled-checkbox:focus+label:before {
@@ -240,7 +247,7 @@ div a.seen span>span {
 }
 
 .styled-checkbox:checked+label:before {
-	background: #FF454F;
+	background: var(--c2);
 }
 
 .styled-checkbox:disabled+label {
@@ -280,19 +287,6 @@ div a.seen span>span {
 }
 #settings input#intervalSearch:focus {
     box-shadow:none;
-    border-bottom: 1px solid #FF454F;
+    border-bottom: 1px solid var(--c2);
     outline:none;
-}
-a#getTabs {
-    font-size: 18px;
-    border: 1px solid #eee;
-    background: #292D3E;
-    color: #69CBBC;
-    text-decoration: none;
-    font-size: 15px;
-    font-family: Consolas;
-    padding: 5px;
-    font-weight: normal;
-    display: inline-block;
-    margin-top: 10px;
 }

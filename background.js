@@ -113,6 +113,7 @@ class Background {
 		chrome.tabs.query({
 			url: '*://*.olx.ro/*'
 		}, (tabs) => {
+            if(!tabs.length) callback(0);
 			tabs.forEach((tab) => {
 				// chrome.tabs.update(tab.id, {
 				// 	active: true
@@ -198,9 +199,10 @@ class Background {
 							}
 							if (that.resultIds[type].includes(id)) return;
 							//if ((~searchData.indexOf('=907') || ~searchData.indexOf('=911') || ~searchData.indexOf('=909') || ~searchData.indexOf('=913')) && searchData.indexOf('&mp') < 0) {
-							if ((~searchData.indexOf('/imobiliare/')) && searchData.indexOf('&mp') < 0) {
+							if ((~data.indexOf('data-type="created_at:desc" data-url="https://www.olx.ro/imobiliare')) && searchData.indexOf('&mp') < 0) {
 								let forbidden = [
-									'apartament',
+                                    'apartament',
+                                    'chire',
 									'casa',
 									'proprietar',
 									'mutare',
@@ -229,7 +231,10 @@ class Background {
 									'oferta',
 									'inchiriez',
 									'bloc',
-									'persoana'
+                                    'persoana',
+                                    'dezvoltator',
+                                    'oferta',
+                                    'etaj'
 
 								];
 								title = title.replace(/(?!(.partament|Casa))[A-Z]\w{2,}( ([a-z0-9]+| ) [A-Z]\w+)?/g, (e) => {
@@ -237,7 +242,7 @@ class Background {
 										return e;
 									return `<span>${e}</span>`;
 								});
-								if (~searchData.indexOf('=907') || ~searchData.indexOf('=911')) {
+								if (~data.indexOf('data-type="created_at:desc" data-url="https://www.olx.ro/imobiliare')) {
 									$.get(href)
 										.done(xdata => {
 											let match = xdata.match(/\d+.m²/gm);

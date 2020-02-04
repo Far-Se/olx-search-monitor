@@ -184,6 +184,7 @@ $(() => {
                 chrome.runtime.sendMessage({
                     do: 'getOLXTabs'
                 }, results => {
+                    if(results.length){
                     result = decodeURIComponent(results.replace(/["](.*?)['"]$/g, '$1').replace('Cauta+acum...', '').replace('view=&min_id=&', '').replace(/"g/, "%22").replace(/'g/, "%27"));
                     $('#items').append(`
                         <div   class = "row">
@@ -192,6 +193,7 @@ $(() => {
                         </div>
                     `);
                     $('#items').find('.row:last-child .titleFilter').focus();
+                    }else window.alert("Deschide un tab cu olx intai");
                 });
             } else {
                 chrome.permissions.request({
