@@ -175,7 +175,19 @@ class Background {
 					const e = $(data.replace(/src=/gm, "mata="));
 					const that = this;
 					let results = e.find('.offer:not(.promoted) .marginright5.linkWithHash');
-
+                    if(~data.indexOf('Nu am gasit anunturi care sa se potriveasca acestei cautari'))
+                    {
+                        that.results[type] = [{
+                            id:0,
+                            href:'#',
+                            title:'Nu exista rezultate momentan.',
+                            price:'-',
+                            seen: 0
+                        }];
+                        //that.resultIds[type].push(id);
+                        cb();
+                        return 1;
+                    }
 					results.each(function() {
 						const href = $(this).attr('href');
 						var title = $(this).find('strong').text();
@@ -199,7 +211,7 @@ class Background {
 							}
 							if (that.resultIds[type].includes(id)) return;
 							//if ((~searchData.indexOf('=907') || ~searchData.indexOf('=911') || ~searchData.indexOf('=909') || ~searchData.indexOf('=913')) && searchData.indexOf('&mp') < 0) {
-							if ((~data.indexOf('data-type="created_at:desc" data-url="https://www.olx.ro/imobiliare')) && searchData.indexOf('&mp') < 0) {
+							if ((~data.indexOf('data-type="galleryWide" href="https://www.olx.ro/imobiliare/')) && searchData.indexOf('&mp') < 0 && !that.isSeen(type, id)) {
 								let forbidden = [
                                     'apartament',
                                     'chire',
@@ -242,7 +254,7 @@ class Background {
 										return e;
 									return `<span>${e}</span>`;
 								});
-								if (~data.indexOf('data-type="created_at:desc" data-url="https://www.olx.ro/imobiliare')) {
+								if (data.match(/imobiliare\/.*?vanzare/g)) {
 									$.get(href)
 										.done(xdata => {
 											let match = xdata.match(/\d+.m²/gm);
@@ -266,7 +278,6 @@ class Background {
 
 										});
 								} else {
-
 									that.results[type].push({
 										id,
 										href,

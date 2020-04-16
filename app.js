@@ -29,8 +29,8 @@ chrome.runtime.sendMessage({
 			}
 			let ndiv = result.seen ? '.tvisited' : '.tnew';
 			div.find(ndiv).append(`<tr>
-                ${result.table[0] ? `<td>${result.table[0]} mp</td>` : ''}
-                ${result.table[0] ? `<td>${result.table[1]} €</td>` : ''}
+                ${result.table[0]&&!result.seen ? `<td>${result.table[0]} mp</td>` : ''}
+                ${result.table[0]&&!result.seen ? `<td>${result.table[1]} €</td>` : ''}
                 <td>${result.price.replace(/(\d) (\d)/g,'$1,$2').replace(/ /g,'&nbsp;')}</td><td>
                 <a href = "${result.href}" target = "_blank" class = "${result.seen ? 'seen' : ''}" data-type = "${type}" data-id = "${result.id}">
                     ` + (results[type][0]['table'] ? '' : `<strong>${result.price}</strong>`) + `
