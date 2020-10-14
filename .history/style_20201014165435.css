@@ -1,13 +1,8 @@
 :root {
-    /* --bg1: #31364A;
+    --bg1: #31364A;
     --bg2: #292d3e;
     --c1: #929AC9;
-    --c2: #FF454F; */
-    
-    --bg1: #191C25;
-    --bg2: #16181F;
-    --c1: #8E99BD;
-    --c2: #e0dfff;
+    --c2: #FF454F;
 }
 body {
 	min-width: 790px;
@@ -80,7 +75,7 @@ button+a:visited,
 a#getTabs {
 	border: 1px solid #eee;
 	background: var(--bg2);
-	color: var(--c2);
+	color: #69CBBC;
 	text-decoration: none;
 	font-size: 15px;
 	font-family: Consolas;

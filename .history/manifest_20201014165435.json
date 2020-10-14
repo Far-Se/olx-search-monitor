@@ -2,7 +2,7 @@
     "name"            : "OLX Search Monitor",
     "description"     : "Keep track of ads on OLX.ro. Works with any category. Rechecks each 5 minutes. ",
     "manifest_version": 2,
-    "version"         : "1.4.4",
+    "version"         : "1.4.3",
     "background"      : {
         "scripts"   : ["jquery-3.3.1.min.js", "background.js"],
         "persistent": false
