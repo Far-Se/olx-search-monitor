@@ -80,7 +80,7 @@ button+a:visited,
 a#getTabs {
 	border: 1px solid #eee;
 	background: var(--bg2);
-	color: var(--c2);
+	color: #69CBBC;
 	text-decoration: none;
 	font-size: 15px;
 	font-family: Consolas;

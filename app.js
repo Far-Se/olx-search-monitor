@@ -13,6 +13,28 @@ if (!Object.prototype.forEach) {
 		}
 	});
 }
+chrome.permissions.contains({
+	permissions: ['tabs'],
+	origins: ['*://*.storia.ro/*']
+}, function(result) {
+	if (!result) {
+        $('#Storia').css('display','inherit');
+	}
+}
+);
+$('#Storia').click( function() {
+    chrome.permissions.request({
+        permissions: ['tabs'],
+        origins: ['*://*.storia.ro/*']
+    }, function(granted) {
+        // The callback argument will be true if the user granted the permissions.
+        if (granted) {
+            window.alert("Acum linkurile de pe Storia.ro se vor incarca.");
+        } else {
+            window.alert("Trebuie permisiunea de Storia pentru aceasta optiune");
+        }
+    });
+})
 chrome.runtime.sendMessage({
 	do: 'getResults'
 }, results => {
@@ -159,11 +181,11 @@ $(() => {
 		});
 	});
 	$('#clear-cache').on('click', function() {
-        // localStorage.setItem('seenIds','{}');
-        // $("#clear-cache").text("Done");
-        // setTimeout(() => {
-        //     $("#clear-cache").text("Clear Cache");
-        // }, 1500);
+		// localStorage.setItem('seenIds','{}');
+		// $("#clear-cache").text("Done");
+		// setTimeout(() => {
+		//     $("#clear-cache").text("Clear Cache");
+		// }, 1500);
 
 		chrome.runtime.sendMessage({
 			do: 'clearCache'
@@ -173,45 +195,45 @@ $(() => {
 				$("#clear-cache").text("Clear Cache");
 			}, 1500);
 		});
-    });
-    
+	});
+
 	$('#getTabs').on('click', function() {
-        chrome.permissions.contains({
-            permissions: ['tabs'],
-            origins: ['*://*.olx.ro/*']
-          }, function(result) {
-            if (result) {
-                chrome.runtime.sendMessage({
-                    do: 'getOLXTabs'
-                }, results => {
-                    if(results.length){
-                    result = decodeURIComponent(results.replace(/["](.*?)['"]$/g, '$1').replace('Cauta+acum...', '').replace('view=&min_id=&', '').replace(/"g/, "%22").replace(/'g/, "%27"));
-                    $('#items').append(`
+		chrome.permissions.contains({
+			permissions: ['tabs'],
+			origins: ['*://*.olx.ro/*']
+		}, function(result) {
+			if (result) {
+				chrome.runtime.sendMessage({
+					do: 'getOLXTabs'
+				}, results => {
+					if (results.length) {
+						result = decodeURIComponent(results.replace(/["](.*?)['"]$/g, '$1').replace('Cauta+acum...', '').replace('view=&min_id=&', '').replace(/"g/, "%22").replace(/'g/, "%27"));
+						$('#items').append(`
                         <div   class = "row">
                         <input class = "titleFilter" name  = "title[]" value = "" focus placeholder = "Title">
                         <input class = "searchFilter" name = "value[]" value = "${result}" placeholder = "Search Data">
                         </div>
                     `);
-                    $('#items').find('.row:last-child .titleFilter').focus();
-                    }else window.alert("Deschide un tab cu olx intai");
-                });
-            } else {
-                chrome.permissions.request({
-                    permissions: ['tabs'],
-                    origins: ['*://*.olx.ro/*']
-                  }, function(granted) {
-                    // The callback argument will be true if the user granted the permissions.
-                    if (granted) {
-                        $('#getTabs').trigger('click');
-                    } else {
-                        window.alert("Trebuie permisiunea de TABS pentru aceasta optiune");
-                    }
-                  });
-            }
-          });
+						$('#items').find('.row:last-child .titleFilter').focus();
+					} else window.alert("Deschide un tab cu olx intai");
+				});
+			} else {
+				chrome.permissions.request({
+					permissions: ['tabs'],
+					origins: ['*://*.olx.ro/*']
+				}, function(granted) {
+					// The callback argument will be true if the user granted the permissions.
+					if (granted) {
+						$('#getTabs').trigger('click');
+					} else {
+						window.alert("Trebuie permisiunea de TABS pentru aceasta optiune");
+					}
+				});
+			}
+		});
 
-    });
-    
+	});
+
 	$('#toggleResponsive').on('change', function() {
 		localStorage.setItem("aux_Responsive", ~~$(this).prop('checked'));
 		if (~~$(this).prop('checked') === 0) {
@@ -228,7 +250,7 @@ $(() => {
                     padding-left:0px !important;
                 }
             </style>`);
-		$('#toggleResponsive').prop('checked', toggleResponsive );//toggleResponsive == false ? '0' : 'checked');
+		$('#toggleResponsive').prop('checked', toggleResponsive); //toggleResponsive == false ? '0' : 'checked');
 	};
 	setResponsive();
 	$(document).on('mousedown', 'div a', function(e) {
