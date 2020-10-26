@@ -295,3 +295,11 @@ div a.seen span>span {
     border-bottom: 1px solid var(--c2);
     outline:none;
 }
+tr.tvisited * {
+    color: rgba(100, 107, 146, 0.7);
+}
+#settings h4 {
+    max-height: 100px;
+    overflow: scroll;
+    box-shadow: inset 0 -4px 5px 0px #8c8c8c3d;
+}

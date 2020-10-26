@@ -43,27 +43,28 @@ chrome.runtime.sendMessage({
 		if (type.indexOf('//') !== -1) continue;
 		let unseenCount = 0;
 		let div = $('<div />');
-		div.append('<table class="tnew">');
-		div.append('<table class="tvisited">');
+		div.append('<table class="tRows">');
+        let tableRows = ``;
+        let tableRowsVisited = ``;
 		for (let result of results[type]) {
 			if (!result.table) {
 				result.table = ["", ""];
 			}
-			let ndiv = result.seen ? '.tvisited' : '.tnew';
-			div.find(ndiv).append(`<tr>
-                ${result.table[0]&&!result.seen ? `<td>${result.table[0]} mp</td>` : ''}
-                ${result.table[0]&&!result.seen ? `<td>${result.table[1]} €</td>` : ''}
+			let ndiv = result.seen ? 'tvisited' : 'tnew';
+			const string   = `<tr class="${ndiv}">
+                ${result.table[0]&&!result.seen ? `<td>${result.table[0]} mp</td>` : '<td class="empty"></td>'}
+                ${result.table[0]&&!result.seen ? `<td>${result.table[1]} €</td>` : '<td class="empty"></td>'}
                 <td>${result.price.replace(/(\d) (\d)/g,'$1,$2').replace(/ /g,'&nbsp;')}</td><td>
                 <a href = "${result.href}" target = "_blank" class = "${result.seen ? 'seen' : ''}" data-type = "${type}" data-id = "${result.id}">
                     ` + (results[type][0]['table'] ? '' : `<strong>${result.price}</strong>`) + `
                     <span>${result.title}</span>
                 </a>
                 </td></tr>
-                `);
-
+                `;
+            result.seen ? (tableRowsVisited += string): (tableRows += string);
 			result.seen || unseenCount++;
 		}
-
+        div.find('.tRows').append(tableRows + tableRowsVisited);
 		//td.append(div);
 		table.append(`<div class="column"><h2>${type} (${unseenCount}/${results[type].length})</h2>${div.html()}</div>`);
 	}
