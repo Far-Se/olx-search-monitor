@@ -18,22 +18,21 @@ chrome.permissions.contains({
 	origins: ['*://*.storia.ro/*']
 }, function(result) {
 	if (!result) {
-        $('#Storia').css('display','inherit');
+		$('#Storia').css('display', 'inherit');
 	}
-}
-);
-$('#Storia').click( function() {
-    chrome.permissions.request({
-        permissions: ['tabs'],
-        origins: ['*://*.storia.ro/*']
-    }, function(granted) {
-        // The callback argument will be true if the user granted the permissions.
-        if (granted) {
-            window.alert("Acum linkurile de pe Storia.ro se vor incarca.");
-        } else {
-            window.alert("Trebuie permisiunea de Storia pentru aceasta optiune");
-        }
-    });
+});
+$('#Storia').click(function() {
+	chrome.permissions.request({
+		permissions: ['tabs'],
+		origins: ['*://*.storia.ro/*']
+	}, function(granted) {
+		// The callback argument will be true if the user granted the permissions.
+		if (granted) {
+			window.alert("Acum linkurile de pe Storia.ro se vor incarca.");
+		} else {
+			window.alert("Trebuie permisiunea de Storia pentru aceasta optiune");
+		}
+	});
 })
 chrome.runtime.sendMessage({
 	do: 'getResults'
@@ -44,14 +43,14 @@ chrome.runtime.sendMessage({
 		let unseenCount = 0;
 		let div = $('<div />');
 		div.append('<table class="tRows">');
-        let tableRows = ``;
-        let tableRowsVisited = ``;
+		let tableRows = ``;
+		let tableRowsVisited = ``;
 		for (let result of results[type]) {
 			if (!result.table) {
 				result.table = ["", ""];
 			}
 			let ndiv = result.seen ? 'tvisited' : 'tnew';
-			const string   = `<tr class="${ndiv}">
+			const string = `<tr class="${ndiv}">
                 ${result.table[0]&&!result.seen ? `<td>${result.table[0]} mp</td>` : '<td class="empty"></td>'}
                 ${result.table[0]&&!result.seen ? `<td>${result.table[1]} €</td>` : '<td class="empty"></td>'}
                 <td>${result.price.replace(/(\d) (\d)/g,'$1,$2').replace(/ /g,'&nbsp;')}</td><td>
@@ -61,10 +60,10 @@ chrome.runtime.sendMessage({
                 </a>
                 </td></tr>
                 `;
-            result.seen ? (tableRowsVisited += string): (tableRows += string);
+			result.seen ? (tableRowsVisited += string) : (tableRows += string);
 			result.seen || unseenCount++;
 		}
-        div.find('.tRows').append(tableRows + tableRowsVisited);
+		div.find('.tRows').append(tableRows + tableRowsVisited);
 		//td.append(div);
 		table.append(`<div class="column"><h2>${type} (${unseenCount}/${results[type].length})</h2>${div.html()}</div>`);
 	}
@@ -131,26 +130,6 @@ $(() => {
 
 		);
 	});
-	$('#citySearch').keypress(
-		function(e) {
-			if (e.which == 10 || e.which == 13)
-				$('#searchCity').trigger('click');
-		}
-	);
-	$('#searchCity').on('click', function() {
-		chrome.runtime.sendMessage({
-			do: 'citySerach',
-			city: $('#citySearch').val(),
-		}, (result) => {
-			$('#cityResults').html('');
-			if (result.status !== 'error') {
-				result.data.forEach((e) => {
-					let id = (e.region ? "region_id: " : "") + e.id;
-					$('#cityResults').append(`<option>${id} - ${e.text}</option>`);
-				})
-			} else $('#cityResults').append(`<option>No results</option>`);
-		});
-	});
 	$('#open-settings').on('click', function() {
 		$('#settings').toggle()
 	});
@@ -179,22 +158,6 @@ $(() => {
 					}
 				}
 			});
-		});
-	});
-	$('#clear-cache').on('click', function() {
-		// localStorage.setItem('seenIds','{}');
-		// $("#clear-cache").text("Done");
-		// setTimeout(() => {
-		//     $("#clear-cache").text("Clear Cache");
-		// }, 1500);
-
-		chrome.runtime.sendMessage({
-			do: 'clearCache'
-		}, results => {
-			$("#clear-cache").text("Done");
-			setTimeout(() => {
-				$("#clear-cache").text("Clear Cache");
-			}, 1500);
 		});
 	});
 
@@ -261,7 +224,8 @@ $(() => {
 
 		const type = a.data('type');
 		const id = a.data('id');
-
+		a.css(`filter`, 'brightness(0.5)');
+		a.css('font-style', 'italic;');
 		chrome.runtime.sendMessage({
 			do: 'markSeen',
 			type,
